@@ -59,8 +59,21 @@ read_random_line() {
             sent_jokes+=("$text")
         fi
         echo "$text"
+        notify-send "$text"  # Send a notification
     fi
 }
+
+# Function to handle SIGINT signal
+handle_sigint() {
+	echo
+    echo "Listen up, you absolute donkey. You just lost because you played like a complete buffoon. Every hand in poker is foldable, you know? It's not the cards that are to blame, it's your lousy decision-making. You chose to play those cards, and look where it got you."
+    echo
+	echo "But hey, don't get all worked up about it. Take a breather. Go rest, cool down. You're no good to anyone if you're on tilt. Remember, poker is a marathon, not a sprint. You've got to keep your head in the game. So take some time off, get your head straight, and come back when you're ready to play like a pro."
+    exit
+}
+
+# Set a trap to catch SIGINT and call handle_sigint function
+trap handle_sigint SIGINT
 
 # Main loop
 while true; do
