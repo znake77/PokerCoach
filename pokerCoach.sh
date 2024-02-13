@@ -36,6 +36,19 @@ if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
     usage
 fi
 
+# Function to display welcome message
+welcome_message() {
+    echo
+    echo "Welcome, you poker enthusiast! Ready to up your game? This script is your new best friend. It's going to give you advices, reminders, and even jokes to keep your spirits high. Remember, poker is not just about the cards, it's about the player. So, buckle up, and let's get started!"
+    echo
+    echo "Remember, you can exit anytime by pressing CTRL + C. But hey, why would you want to leave when you're just getting started?"
+    echo
+    sleep 17
+}
+
+# Call the welcome_message function at the start of the script
+welcome_message
+
 # Function to read a random line from a file
 read_random_line() {
     local file=$1
