@@ -24,10 +24,19 @@ These instructions will get you a copy of the project up and running on your loc
 
 You need to have `bash` and `mpg123` installed on your system to run this script. If not installed, you can install it using the following command:
 
+For Ubuntu:
 ```
 sudo apt-get install bash
 sudo apt-get install mpg123
 ```
+
+For Mac:
+```
+brew install bash
+brew install mpg123
+```
+
+For Windows, you need to install Git Bash and then run the script using it.
 
 ### Installing
 
