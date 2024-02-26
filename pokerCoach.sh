@@ -13,17 +13,23 @@ sent_advices=()
 sent_reminders=()
 sent_jokes=()
 
-# Check if the -nosound or --nosound argument is provided
-sound=true
-voice=true
-if [[ $1 == "-nosound" ]] || [[ $1 == "--nosound" ]]; then
-    sound=false
-fi
-
-# Check if the --no-voice argument is provided
-if [[ $1 == "--no-voice" ]]; then
-    voice=false
-fi
+# Check if the -nosound, --nosound, --no-voice, -h, or --help argument is provided
+for arg in "$@"
+do
+    case $arg in
+        -nosound|--nosound)
+            sound=false
+            shift
+            ;;
+        --no-voice)
+            voice=false
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+    esac
+done
 
 # Function to display usage information
 usage() {
@@ -38,10 +44,6 @@ usage() {
     exit
 }
 
-# Check if the -h or --help argument is provided
-if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
-    usage
-fi
 
 # Check if mailx and fetchmail commands are installed
 if ! command -v festival &> /dev/null
