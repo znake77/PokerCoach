@@ -76,7 +76,15 @@ welcome_message
 # Function to read a random line from a file
 read_random_line() {
     local file=$1
+    if [ ! -f "$file" ]; then
+        echo "File $file does not exist."
+        exit 1
+    fi
     local lines=$(cat $file | wc -l)
+    if [ "$lines" -eq 0 ]; then
+        echo "File $file is empty."
+        exit 1
+    fi
     local random_line=$((RANDOM % $lines + 1))
     local text=$(sed "${random_line}q;d" $file)
 
@@ -97,13 +105,12 @@ read_random_line() {
         fi
         echo "$text"
         notify-send "$text"  # Send a notification
-	    echo
-	    echo "To exit: press CTRL + C. To mute/unmute voice: press 'm'. To mute/unmute sound: press 's'."
+      echo
+      echo "To exit: press CTRL + C. To mute/unmute voice: press 'm'. To mute/unmute sound: press 's'."
         if $voice; then
             echo "$text" | festival --tts
         fi
     fi
-
 }
 
 # Function to handle SIGINT signal
