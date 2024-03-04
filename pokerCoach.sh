@@ -8,6 +8,22 @@ advices_file="$BASE_DIR/advices.txt"
 reminders_file="$BASE_DIR/reminders.txt"
 jokes_file="$BASE_DIR/jokes.txt"
 
+# Check if the required files exist
+if [ ! -f "$advices_file" ]; then
+    echo "File $advices_file does not exist."
+    exit 1
+fi
+
+if [ ! -f "$reminders_file" ]; then
+    echo "File $reminders_file does not exist."
+    exit 1
+fi
+
+if [ ! -f "$jokes_file" ]; then
+    echo "File $jokes_file does not exist."
+    exit 1
+fi
+
 # Define arrays to keep track of sent texts
 sent_advices=()
 sent_reminders=()
