@@ -132,9 +132,17 @@ read_random_line() {
 # Function to handle SIGINT signal
 handle_sigint() {
   echo
-    echo "Listen up, you absolute donkey. You just lost because you played like a complete buffoon. Every hand in poker is foldable, you know? It's not the cards that are to blame, it's your lousy decision-making. You chose to play those cards, and look where it got you."
+    closing_text1="Listen up, you absolute donkey. You just lost because you played like a complete buffoon. Every hand in poker is foldable, you know? It's not the cards that are to blame, it's your lousy decision-making. You chose to play those cards, and look where it got you."
+    closing_text2="But hey, don't get all worked up about it. Take a breather. Go rest, cool down. You're no good to anyone if you're on tilt. Remember, poker is a marathon, not a sprint. You've got to keep your head in the game. So take some time off, get your head straight, and come back when you're ready to play like a pro."
+    echo $closing_text1
     echo
-  echo "But hey, don't get all worked up about it. Take a breather. Go rest, cool down. You're no good to anyone if you're on tilt. Remember, poker is a marathon, not a sprint. You've got to keep your head in the game. So take some time off, get your head straight, and come back when you're ready to play like a pro."
+    echo $closing_text2
+
+    if $voice; then
+        echo "$closing_text1" | festival --tts
+        sleep 1
+        echo "$closing_text2" | festival --tts
+    fi
     exit
 }
 
