@@ -3,11 +3,17 @@
 # Determine the script's directory
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+text_data_path="$BASE_DIR/text_data"
+
 # Define the files containing advices, reminders, philosopher, and jokes
-advices_file="$BASE_DIR/advices.txt"
-reminders_file="$BASE_DIR/reminders.txt"
-jokes_file="$BASE_DIR/jokes.txt"
-philosopher_file="$BASE_DIR/philosopher.txt"
+advices_file="$text_data_path/advices.txt"
+reminders_file="$text_data_path/reminders.txt"
+jokes_file="$text_data_path/jokes.txt"
+philosopher_file="$text_data_path/philosopher.txt"
+
+# Define the files containing closing texts
+closing_text_mad_file="$text_data_path/closing_text_mad.txt"
+closing_text_comfort_file="$text_data_path/closing_text_comfort.txt"
 
 # Check if the required files exist
 if [ ! -f "$advices_file" ]; then
@@ -141,9 +147,9 @@ read_random_line() {
 
 # Function to handle SIGINT signal
 handle_sigint() {
-  echo
-    closing_text_mad="Listen up, you absolute donkey. You just lost because you played like a complete buffoon. Every hand in poker is foldable, you know? It's not the cards that are to blame, it's your lousy decision-making. You chose to play those cards, and look where it got you."
-    closing_text_comfort="But hey, don't get all worked up about it. Take a breather. Go rest, cool down. You're no good to anyone if you're on tilt. Remember, poker is a marathon, not a sprint. You've got to keep your head in the game. So take some time off, get your head straight, and come back when you're ready to play like a pro."
+    echo
+    closing_text_mad=$(shuf -n 1 $closing_text_mad_file)
+    closing_text_comfort=$(shuf -n 1 $closing_text_comfort_file)
     echo $closing_text_mad
     echo
     echo $closing_text_comfort
