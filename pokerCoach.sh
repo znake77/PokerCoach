@@ -3,10 +3,11 @@
 # Determine the script's directory
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Define the files containing advices, reminders, and jokes
+# Define the files containing advices, reminders, philosopher, and jokes
 advices_file="$BASE_DIR/advices.txt"
 reminders_file="$BASE_DIR/reminders.txt"
 jokes_file="$BASE_DIR/jokes.txt"
+philosopher_file="$BASE_DIR/philosopher.txt"
 
 # Check if the required files exist
 if [ ! -f "$advices_file" ]; then
@@ -24,10 +25,16 @@ if [ ! -f "$jokes_file" ]; then
     exit 1
 fi
 
+if [ ! -f "$philosopher_file" ]; then
+    echo "File $philosopher_file does not exist."
+    exit 1
+fi
+
 # Define arrays to keep track of sent texts
 sent_advices=()
 sent_reminders=()
 sent_jokes=()
+sent_philosopher=()
 
 # Check if the -nosound, --nosound, --no-voice, -h, or --help argument is provided
 for arg in "$@"
@@ -51,11 +58,11 @@ done
 usage() {
     echo "Usage: $0 [-h|--help] [-nosound|--nosound] [--no-voice]"
     echo
-    echo "This script is designed to help you improve your poker game by providing advices, reminders, and jokes. It randomly selects and displays a piece of advice, a reminder, or a joke from its respective text file every 2 minutes. The script ensures that the same text is not repeated until all texts in the file have been displayed."
+    echo "This script is designed to help you improve your poker game by providing advices, reminders, philosopher sentences and jokes. It randomly selects and displays a piece of advice, a reminder, a philosopher sentence or a joke from its respective text file every 2 minutes. The script ensures that the same text is not repeated until all texts in the file have been displayed."
     echo
     echo "Options:"
     echo "-h, --help      Display this help message."
-    echo "-nosound, --nosound  Run the script without sound. By default, a different sound is played depending on whether an advice, a reminder, or a joke is displayed."
+    echo "-nosound, --nosound  Run the script without sound. By default, a different sound is played depending on whether an advice, a reminder, a philosopher sentence or a joke is displayed."
     echo "--no-voice      Run the script without voice. By default, a voice reads the messages."
     exit
 }
@@ -77,7 +84,7 @@ fi
 # Function to display welcome message
 welcome_message() {
     echo
-    echo "Welcome, you poker enthusiast! Ready to up your game? This script is your new best friend. It's going to give you advices, reminders, and even jokes to keep your spirits high. Remember, poker is not just about the cards, it's about the player. So, buckle up, and let's get started!"
+    echo "Welcome, you poker enthusiast! Ready to up your game? This script is your new best friend. It's going to give you advices, reminders, philosopher sentences and even jokes to keep your spirits high. Remember, poker is not just about the cards, it's about the player. So, buckle up, and let's get started!"
     echo
     echo "Remember, you can exit anytime by pressing CTRL + C. But hey, why would you want to leave when you're just getting started?"
     echo
@@ -107,6 +114,7 @@ read_random_line() {
     # Check if the text has already been sent
     if [[ $file == $advices_file && " ${sent_advices[@]} " =~ " ${text} " ]] ||
        [[ $file == $reminders_file && " ${sent_reminders[@]} " =~ " ${text} " ]] ||
+       [[ $file == $philosopher_file && " ${sent_philosopher[@]} " =~ " ${text} " ]] ||
        [[ $file == $jokes_file && " ${sent_jokes[@]} " =~ " ${text} " ]]; then
         # If the text has already been sent, read another random line
         read_random_line $file
@@ -116,6 +124,8 @@ read_random_line() {
             sent_advices+=("$text")
         elif [[ $file == $reminders_file ]]; then
             sent_reminders+=("$text")
+        elif [[ $file == $philosopher_file ]]; then
+            sent_philosopher+=("$text")
         elif [[ $file == $jokes_file ]]; then
             sent_jokes+=("$text")
         fi
@@ -154,7 +164,7 @@ while true; do
     clear
 
     # Choose a random file
-    random_file=$((RANDOM % 3))
+    random_file=$((RANDOM % 4))
 
     # Check if all jokes have been sent
     if [[ ${#sent_jokes[@]} -eq 50 ]]; then
@@ -178,6 +188,14 @@ while true; do
             mpg123 -q $BASE_DIR/sounds/simple-buzzer.mp3
         fi
         read_random_line $reminders_file
+    elif [[ $random_file -eq 2 ]]; then
+        echo "Reminder:"
+        # Play a bell sound if sound is enabled
+        if $sound; then
+            echo -e "\a"
+            mpg123 -q $BASE_DIR/sounds/buzzer-bell.mp3
+        fi
+        read_random_line $philosopher_file
     else
         echo "Joke:"
         # Play a bell sound if sound is enabled
@@ -188,11 +206,12 @@ while true; do
         read_random_line $jokes_file
     fi
 
-    # Check if all advices, reminders, and jokes have been sent
-    if [[ ${#sent_advices[@]} -eq 125 && ${#sent_reminders[@]} -eq 125 && ${#sent_jokes[@]} -eq 50 ]]; then
+    # Check if all advices, reminders, philosopher sentences and jokes have been sent
+    if [[ ${#sent_advices[@]} -eq 125 && ${#sent_reminders[@]} -eq 125 && ${#sent_philosopher[@]} -eq 125 && ${#sent_jokes[@]} -eq 50 ]]; then
         # If all have been sent, reset and restart fresh
         sent_advices=()
         sent_reminders=()
+        sent_philosopher=()
         sent_jokes=()
     fi
 
