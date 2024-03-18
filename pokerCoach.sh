@@ -15,6 +15,20 @@ philosopher_file="$text_data_path/philosopher.txt"
 closing_text_mad_file="$text_data_path/closing_text_mad.txt"
 closing_text_comfort_file="$text_data_path/closing_text_comfort.txt"
 
+
+# Function to display usage information
+usage() {
+    echo "Usage: $0 [-h|--help] [-nosound|--nosound] [--no-voice]"
+    echo
+    echo "This script is designed to help you improve your poker game by providing advices, reminders, philosopher sentences and jokes. It randomly selects and displays a piece of advice, a reminder, a philosopher sentence or a joke from its respective text file every 2 minutes. The script ensures that the same text is not repeated until all texts in the file have been displayed."
+    echo
+    echo "Options:"
+    echo "-h, --help      Display this help message."
+    echo "-nosound, --nosound  Run the script without sound. By default, a different sound is played depending on whether an advice, a reminder, a philosopher sentence or a joke is displayed."
+    echo "--no-voice      Run the script without voice. By default, a voice reads the messages."
+    exit
+}
+
 # Check if the required files exist
 if [ ! -f "$advices_file" ]; then
     echo "File $advices_file does not exist."
@@ -60,18 +74,19 @@ do
     esac
 done
 
-# Function to display usage information
-usage() {
-    echo "Usage: $0 [-h|--help] [-nosound|--nosound] [--no-voice]"
-    echo
-    echo "This script is designed to help you improve your poker game by providing advices, reminders, philosopher sentences and jokes. It randomly selects and displays a piece of advice, a reminder, a philosopher sentence or a joke from its respective text file every 2 minutes. The script ensures that the same text is not repeated until all texts in the file have been displayed."
-    echo
-    echo "Options:"
-    echo "-h, --help      Display this help message."
-    echo "-nosound, --nosound  Run the script without sound. By default, a different sound is played depending on whether an advice, a reminder, a philosopher sentence or a joke is displayed."
-    echo "--no-voice      Run the script without voice. By default, a voice reads the messages."
-    exit
-}
+# Listen for key press
+while true; do
+    read -rsn1 input
+    if [ "$input" = "a" ]; then
+        if $sound; then
+            sound=false
+            echo "Sound muted."
+        else
+            sound=true
+            echo "Sound unmuted."
+        fi
+    fi
+done &
 
 
 # Check if mailx and fetchmail commands are installed
@@ -94,7 +109,7 @@ welcome_message() {
     echo
     echo "Remember, you can exit anytime by pressing CTRL + C. But hey, why would you want to leave when you're just getting started?"
     echo
-    echo "Press 'm' to mute/unmute the voice. Press 's' to mute/unmute the sound."
+    echo "Press 'm' to mute/unmute the voice. Press 'a' to mute/unmute the sound."
     echo
     sleep 17
 }
@@ -138,15 +153,15 @@ read_random_line() {
         echo "$text"
         notify-send "$text"  # Send a notification
       echo
-      echo "To exit: press CTRL + C. To mute/unmute voice: press 'm'. To mute/unmute sound: press 's'."
+      echo "To exit: press CTRL + C. To mute/unmute voice: press 'm'. To mute/unmute sound: press 'a'."
         if $voice; then
             echo "$text" | festival --tts
         fi
     fi
 }
 
-# Function to handle SIGINT signal
-handle_sigint() {
+# Function to handle SIGINT and SIGTERM signals
+handle_signal() {
     echo
     closing_text_mad=$(shuf -n 1 $closing_text_mad_file)
     closing_text_comfort=$(shuf -n 1 $closing_text_comfort_file)
@@ -162,8 +177,8 @@ handle_sigint() {
     exit
 }
 
-# Set a trap to catch SIGINT and call handle_sigint function
-trap handle_sigint SIGINT
+# Set a trap to catch SIGINT and SIGTERM and call handle_signal function
+trap handle_signal SIGINT SIGTERM
 
 # Main loop
 while true; do
@@ -195,7 +210,7 @@ while true; do
         fi
         read_random_line $reminders_file
     elif [[ $random_file -eq 2 ]]; then
-        echo "Reminder:"
+        echo "Philosophy:"
         # Play a bell sound if sound is enabled
         if $sound; then
             echo -e "\a"
