@@ -159,8 +159,24 @@ read_random_line() {
         fi
     fi
 }
+# Listen for key press
+while true; do
+    read -rsn1 input
+    if [ "$input" = "a" ]; then
+        if $sound; then
+            sound=false
+            echo "Sound muted."
+        else
+            sound=true
+            echo "Sound unmuted."
+        fi
+    fi
+done &
 
-# Function to handle SIGINT and SIGTERM signals
+# Save the PID of the background process
+bg_pid=$!
+
+# Function to handle SIGINT, SIGTERM and EXIT signals
 handle_signal() {
     echo
     closing_text_mad=$(shuf -n 1 $closing_text_mad_file)
@@ -174,11 +190,14 @@ handle_signal() {
         sleep 1
         echo "$closing_text_comfort" | festival --tts
     fi
+
+    # Kill the background process
+    kill $bg_pid
     exit
 }
 
-# Set a trap to catch SIGINT and SIGTERM and call handle_signal function
-trap handle_signal SIGINT SIGTERM
+# Set a trap to catch SIGINT, SIGTERM and EXIT and call handle_signal function
+trap handle_signal SIGINT SIGTERM EXIT
 
 # Main loop
 while true; do
