@@ -15,6 +15,8 @@ philosopher_file="$text_data_path/philosopher.txt"
 closing_text_mad_file="$text_data_path/closing_text_mad.txt"
 closing_text_comfort_file="$text_data_path/closing_text_comfort.txt"
 
+# Define the file containing important poker advices
+important_advices_file="$text_data_path/important_advices.txt"
 
 # Function to display usage information
 usage() {
@@ -114,8 +116,21 @@ welcome_message() {
     sleep 17
 }
 
+# Function to display important poker advices
+display_important_advices() {
+    echo
+    echo "Before we start, here are 7 most important poker advices:"
+    echo
+    cat $important_advices_file
+    echo
+    sleep 17
+}
+
 # Call the welcome_message function at the start of the script
 welcome_message
+
+# Call the display_important_advices function after the welcome message
+display_important_advices
 
 # Function to read a random line from a file
 read_random_line() {
